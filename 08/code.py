@@ -17,6 +17,7 @@ class Node:
                 self.right.insert(key)
 
     def pre_order_traversal(self):
+        #реализация прямого левого обхода
         result = [self.key]
         if self.left:
             result += self.left.pre_order_traversal()
@@ -72,6 +73,46 @@ def main():
     
     result = root.pre_order_traversal() if root else []
     print("\n".join(map(str, result)))
+
+
+#######################################
+
+# if self.left is None and self.right is None:
+#                 return None - вернули для предыдущей ноды "Ничего"
+
+#             # Вариант 2: у вершины только один потомок
+#             if self.left is None: - если слева ничего нет
+
+#                 return self.right - вернули для предыдущей ноды последующую парвую
+
+#             if self.right is None: - если справа ничего нет
+#                 return self.left - вернули для предыдущей ноды  последующую левую
+
+
+#######################################
+
+# while current.left: - до тех пор, пока можем идти влево - идем влево и сохраняем в corrent видимо ссылки. А потом вывродим
+#             current = current.left
+#         return current
+
+
+#######################################
+
+#Код ниже можно считать стнадартным алгоритмом поиска элемента
+# def search(self, key):
+#         if key < self.key:
+#             if self.left:
+#                 self.left = self.left.delete(key)
+
+#         elif key > self.key:
+#             if self.right:
+#                 self.right = self.right.delete(key)
+
+#         else:
+#           #что то сделать с найденным элементом
+
+#####################################
+
 
 if __name__ == '__main__':
     main()

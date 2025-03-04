@@ -2,12 +2,11 @@ import sys
 import math
 
 def main():
- 
-    # low и hight - задаём границы нешему промежутку (основной алгоритм)
+    # Функция проверки корректности BST
     def cheaking_for_search(i, low, hight):
         if i == -1:
             return True
-       if (nodeValues[i] < minBounds[i]) or (nodeValues[i] >= maxBounds[i]):
+        if not (low < values[i] < hight):
             return False
         return cheaking_for_search(left[i], low, values[i]) and cheaking_for_search(right[i], values[i], hight)
 
@@ -15,24 +14,29 @@ def main():
 
     data = []
     while True:
-        user_input = input().strip()  
-        if user_input == "": 
+        try:
+            user_input = input().strip()  # Считываем строку и убираем лишние пробелы
+            if user_input == "":  # Если строка пустая – заканчиваем ввод
+                break
+            # Добавляем новые токены, а не перезаписываем список
+            data.extend(user_input.split())
+        except EOFError:
             break
 
-        data.extend(user_input.split())
-     
     n = int(data[0])
 
     values = [0] * n
     left = [-1] * n
     right = [-1] * n
 
+    # Корневой узел
     values[0] = int(data[1])
     index = 2
 
-    #Заполнение данных
+    # Заполнение данных для остальных узлов
     for i in range(1, n):
         val = int(data[index])
+        # Вычитаем 1, т.к. родительский индекс во входных данных задан с 1
         parent_index = int(data[index + 1]) - 1
         direction = data[index + 2]
         index += 3
@@ -43,7 +47,7 @@ def main():
         elif direction == "R":
             right[parent_index] = i
 
-    # Вызываем функцию
+    # Проверка, является ли дерево BST
     if cheaking_for_search(0, -math.inf, math.inf):
         print("YES")
     else:
@@ -51,7 +55,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 #######################################
 

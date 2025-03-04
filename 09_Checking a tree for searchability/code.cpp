@@ -1,61 +1,72 @@
-#include <vector>
-#include <fstream>
-#include <limits>
+import sys
+import math
 
-const long long MIN_BOUND = -3000000000; // Adjust bounds as needed
-const long long MAX_BOUND = 3000000000;
+def main():
+ 
+    # low и hight - задаём границы нешему промежутку (основной алгоритм)
+    def cheaking_for_search(i, low, hight):
+        if i == -1:
+            return True
+       if (nodeValues[i] < minBounds[i]) or (nodeValues[i] >= maxBounds[i]):
+            return False
+        return cheaking_for_search(left[i], low, values[i]) and cheaking_for_search(right[i], values[i], hight)
 
-int main() {
-    std::ifstream inputFile("bst.in");
-    std::ofstream outputFile("bst.out");
+    ###############################
 
-    if (!inputFile || !outputFile) {
-        outputFile << "NO";
-        return 0;
-    }
+    data = []
+    while True:
+        user_input = input().strip()  
+        if user_input == "": 
+            break
 
-    long long numberOfNodes;
-    inputFile >> numberOfNodes;
+        data.extend(user_input.split())
+     
+    n = int(data[0])
 
-    if (numberOfNodes == 0) {
-        outputFile << "NO";
-        return 0;
-    }
+    values = [0] * n
+    left = [-1] * n
+    right = [-1] * n
 
-    std::vector<long long> nodeValues(numberOfNodes);
-    std::vector<long long> minBounds(numberOfNodes, MIN_BOUND);
-    std::vector<long long> maxBounds(numberOfNodes, MAX_BOUND);
+    values[0] = int(data[1])
+    index = 2
 
-    inputFile >> nodeValues[0]; // Read root node
+    #Заполнение данных
+    for i in range(1, n):
+        val = int(data[index])
+        parent_index = int(data[index + 1]) - 1
+        direction = data[index + 2]
+        index += 3
 
-    for (long long i = 1; i < numberOfNodes; ++i) {
-        long long currentValue, parentIndex;
-        char childType;
+        values[i] = val
+        if direction == "L":
+            left[parent_index] = i
+        elif direction == "R":
+            right[parent_index] = i
 
-        if (!(inputFile >> currentValue >> parentIndex >> childType)) {
-            outputFile << "NO";
-            return 0; // Invalid input
-        }
+    # Вызываем функцию
+    if cheaking_for_search(0, -math.inf, math.inf):
+        print("YES")
+    else:
+        print("NO")
 
-        nodeValues[i] = currentValue;
+if __name__ == '__main__':
+    main()
 
-        // Adjust bounds for left and right children
-        if (childType == 'L') {
-            minBounds[i] = minBounds[parentIndex - 1];
-            maxBounds[i] = nodeValues[parentIndex - 1];
-        } else if (childType == 'R') {
-            minBounds[i] = nodeValues[parentIndex - 1];
-            maxBounds[i] = maxBounds[parentIndex - 1];
-        }
 
-        // Check if currentValue violates BST properties
-        if (nodeValues[i] < minBounds[i] || nodeValues[i] >= maxBounds[i]) {
-            outputFile << "NO";
-            return 0;
-        }
-    }
+#######################################
 
-    // If all nodes satisfy BST properties
-    outputFile << "YES";
-    return 0;
-}
+# values[i] = val
+# if child_dir == "L":
+#     left[parent_index] = i - вот тут разобраться с идеей, то есть что
+                                # даёт такое хранение
+# elif child_dir == "R":
+#     right[parent_index] = i
+
+############################# Разбор, то есть меня интерисует как организованы left и right, что мы можнем так писать: 
+# return check_bst(left[i], low, values[i]) and check_bst(right[i], values[i], high) - 
+
+#############################
+
+#     data.extend(user_input.split())
+
+#     .extend() - так же как и .append, но в качестве аргумента принимает итератор (итератор, итерируемый объект) и объединяет его со списком

@@ -6,7 +6,7 @@ def main():
     def cheaking_for_search(i, low, hight):
         if i == -1:
             return True
-        if not (low < values[i] < hight):
+        if not (low < values[i] <= hight):
             return False
         return cheaking_for_search(left[i], low, values[i]) and cheaking_for_search(right[i], values[i], hight)
 

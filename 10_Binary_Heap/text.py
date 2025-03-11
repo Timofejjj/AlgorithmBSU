@@ -11,11 +11,11 @@ result = "Yes"
 
 for i in range(n):
 
-  if (2*i + 1) < (n - 1) and arr[i] > arr[2*i + 1]:
+  if (2*i + 1) <= (n - 1) and arr[i] > arr[2*i + 1]:
     result = "No"
     break
 
-  if (2*i + 2) < (n - 1) and arr[i] > arr[2*i + 2]:
+  if (2*i + 2) <= (n - 1) and arr[i] > arr[2*i + 2]:
     result = "No"
     break
 

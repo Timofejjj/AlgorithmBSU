@@ -1,0 +1,66 @@
+#include <iostream>
+#include <fstream>
+#include <deque>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    ifstream fin("huffman.in");
+    ofstream fout("huffman.out");
+
+    int n;
+    fin >> n;
+    
+    deque<long long> gen_queue(n);
+    for (int i = 0; i < n; i++) {
+        fin >> gen_queue[i];
+    }
+    
+    deque<long long> helper_queue;
+    long long binary_length = 0;
+    
+    while ((gen_queue.size() + helper_queue.size()) > 1) {
+        long long first_min, second_min;
+        
+        if (helper_queue.empty()) {
+            first_min = gen_queue.front();
+            gen_queue.pop_front();
+        } else if (gen_queue.empty()) {
+            first_min = helper_queue.front();
+            helper_queue.pop_front();
+        } else {
+            if (gen_queue.front() <= helper_queue.front()) {
+                first_min = gen_queue.front();
+                gen_queue.pop_front();
+            } else {
+                first_min = helper_queue.front();
+                helper_queue.pop_front();
+            }
+        }
+        
+        if (helper_queue.empty()) {
+            second_min = gen_queue.front();
+            gen_queue.pop_front();
+        } else if (gen_queue.empty()) {
+            second_min = helper_queue.front();
+            helper_queue.pop_front();
+        } else {
+            if (gen_queue.front() <= helper_queue.front()) {
+                second_min = gen_queue.front();
+                gen_queue.pop_front();
+            } else {
+                second_min = helper_queue.front();
+                helper_queue.pop_front();
+            }
+        }
+        
+        long long sum = first_min + second_min;
+        helper_queue.push_back(sum);
+        binary_length += sum;
+    }
+    
+    fout << binary_length;
+    
+    return 0;
+}

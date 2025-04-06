@@ -167,4 +167,14 @@ def BFS(G, v):
 
 
 
+#--------------------------------
+# Определение связности графа:
+
+
+for vertage in range(vertages):
+    if not visited[vertage]:
+        BFS(vertage)
+
+
+
 

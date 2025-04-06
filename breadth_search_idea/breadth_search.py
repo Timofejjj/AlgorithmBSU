@@ -20,6 +20,7 @@ def BFS(G, v):
             # Двигаеся по всем вершинам, соседним с текущей v
             for w in G[v]:
                 if not mark_vertaxes[w]:
+                    mark_vertaxes[w] = True
                     q.put(w)
 
 

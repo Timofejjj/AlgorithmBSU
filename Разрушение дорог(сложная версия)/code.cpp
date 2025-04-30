@@ -7,49 +7,46 @@ std::vector<int> parent;
 std::vector<int> rank;
 int connectivity_components;
 
-int find(int el) {
-    if (parent[el] != el) {
-        parent[el] = find(parent[el]);
+inline int find(int el) {
+    // Итеративная версия с компрессией пути
+    while (parent[el] != el) {
+        parent[el] = parent[parent[el]];  // Компрессия пути
+        el = parent[el];
     }
-    return parent[el];
+    return el;
 }
 
-void Union(int el_1, int el_2) {
+inline void Union(int el_1, int el_2) {
     int el_1_root = find(el_1);
     int el_2_root = find(el_2);
 
     if (el_1_root == el_2_root) {
         return;
     }
+    
     if (rank[el_1_root] < rank[el_2_root]) {
         parent[el_1_root] = el_2_root;
-    } else if (rank[el_1_root] > rank[el_2_root]) {
-        parent[el_2_root] = el_1_root;
     } else {
         parent[el_2_root] = el_1_root;
-        rank[el_1_root] += 1;
+        if (rank[el_1_root] == rank[el_2_root]) {
+            rank[el_1_root]++;
+        }
     }
-    connectivity_components -= 1;
+    
+    connectivity_components--;
 }
 
 int main() {
+    std::ios_base::sync_with_stdio(false);  // Ускорение ввода-вывода
     std::ifstream file("input.txt");
     if (!file.is_open()) {
         std::cerr << "Не удалось открыть input.txt" << std::endl;
         return 1;
     }
 
-    std::vector<int> nums;
-    int num;
-    while (file >> num) {
-        nums.push_back(num);
-    }
-    file.close();
-
-    int towns_num = nums[0];
-    int roads = nums[1];
-    int earthquake = nums[2];
-
+    int towns_num, roads, earthquake;
+    file >> towns_num >> roads >> earthquake;
+    
     parent.resize(towns_num);
     for (int i = 0; i < towns_num; i++) {
         parent[i] = i;
@@ -57,21 +54,19 @@ int main() {
     rank.resize(towns_num, 0);
     connectivity_components = towns_num;
 
-    std::vector<std::pair<int, int>> conected_towns;
-    std::vector<int> indexes_destroided_roads;
-
-    int i = 3;
-    for (int _ = 0; _ < roads; _++) {
-        int t_1 = nums[i] - 1;
-        int t_2 = nums[i + 1] - 1;
-        conected_towns.push_back({t_1, t_2});
-        i += 2;
+    std::vector<std::pair<int, int>> conected_towns(roads);
+    for (int i = 0; i < roads; i++) {
+        int t_1, t_2;
+        file >> t_1 >> t_2;
+        conected_towns[i] = {t_1 - 1, t_2 - 1};
     }
 
-    for (int _ = 0; _ < earthquake; _++) {
-        indexes_destroided_roads.push_back(nums[i] - 1);
-        i += 1;
+    std::vector<int> indexes_destroided_roads(earthquake);
+    for (int i = 0; i < earthquake; i++) {
+        file >> indexes_destroided_roads[i];
+        indexes_destroided_roads[i]--;
     }
+    file.close();
 
     std::vector<bool> delited(roads, false);
     for (int idx : indexes_destroided_roads) {
@@ -80,23 +75,15 @@ int main() {
 
     for (int i = 0; i < roads; i++) {
         if (!delited[i]) {
-            int t_1 = conected_towns[i].first;
-            int t_2 = conected_towns[i].second;
-            Union(t_1, t_2);
+            Union(conected_towns[i].first, conected_towns[i].second);
         }
     }
 
-    std::vector<char> res(earthquake, ' ');
+    std::string res(earthquake, ' ');
     for (int j = earthquake - 1; j >= 0; j--) {
-        if (connectivity_components == 1) {
-            res[j] = '1';
-        } else {
-            res[j] = '0';
-        }
+        res[j] = (connectivity_components == 1) ? '1' : '0';
         int idx = indexes_destroided_roads[j];
-        int u = conected_towns[idx].first;
-        int v = conected_towns[idx].second;
-        Union(u, v);
+        Union(conected_towns[idx].first, conected_towns[idx].second);
     }
 
     std::ofstream output("output.txt");
@@ -104,10 +91,10 @@ int main() {
         std::cerr << "Не удалось открыть output.txt" << std::endl;
         return 1;
     }
-    for (int i = 0; i < res.size(); i++) {
-        output << res[i];
-    }
+    output << res;
     output.close();
 
+    return 0;
+}
     return 0;
 }
